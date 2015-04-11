@@ -1,0 +1,27 @@
+﻿html {
+    background-image: url('images/Website-Background.jpg');
+}
+
+body {
+    margin: 0 auto;
+    width: 60%;
+    font-family: 'Lucida Grande','Lucida Sans',Arial,'sans-serif';
+}
+
+.pageHeader {
+    font-size: 3.5em;
+}
+
+.divTEPC {
+    padding: 5%;
+}
+
+.divRAM {
+    padding-left: 5%;
+}
+
+.btnPlot {
+    float: right;
+    margin-right: 5%;
+    margin-top: 1%;
+}
