@@ -18,13 +18,19 @@
         <div id="accordion">
             <h3>Browse TEPC file</h3>
             <div>
-                <asp:Button runat="server" ID="btnTEPCBrowse" Text="Browse" OnClick="btnTEPCBrowse_Click" />
-                <asp:Label runat="server" ID="lblTEPCPath" Visible="false"></asp:Label>
+                   <asp:FileUpload ID="btnTEPCBrowse" runat="server" OnLoad="btnTEPCBrowse_Load"  />
+                   <asp:Button ID="btnUploadTEPC" runat="server" OnClick="Button1_Click" Text="Upload" OnClientClick="javascript:$('#imgTEPCLoading').show();"/>
+                <img src="Styles/images/ajax-loader.gif" id="imgTEPCLoading" runat="server" style="display:none"/>
+                 <asp:LinkButton runat="server" Text="Download average doses values" id="lnkDownloadAvgTEPC" OnClick="lnkDownloadAvgTEPC_Click"></asp:LinkButton>
+                <div>
+                    <asp:Label ID="lblErrorDescription" runat="server" Text="" ForeColor="Red"></asp:Label>
+               
+                   
+                    </div>
             </div>
             <h3>Browse RAM TLD file</h3>
             <div>
-                <asp:Button runat="server" ID="btnRAMBrowse" Text="Browse" />
-                <asp:Label runat="server" ID="lblRAMPath" Visible="false"></asp:Label>
+                  <asp:FileUpload ID="btnRAMBrowse" runat="server" />
                 <br />
                 <div style="float: left; width:50%">
                     <p>
@@ -42,7 +48,6 @@
         </div>
         <%--Accordian code end--%>
         <asp:Button runat="server" ID="btnPlot" text="Plot" CssClass="ui-widget button btnPlot"/>
-    </form>
     <script src="Scripts/jquery.js"></script>
     <%--    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>--%>
     <script src="Scripts/jquery-ui.js"></script>
@@ -56,5 +61,7 @@
 
 
     </script>
-</body>
+     
+    </form>
+    </body>
 </html>

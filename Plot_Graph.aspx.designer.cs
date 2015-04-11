@@ -28,16 +28,43 @@ namespace Projections_Capstone_Spring15 {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnTEPCBrowse;
+        protected global::System.Web.UI.WebControls.FileUpload btnTEPCBrowse;
         
         /// <summary>
-        /// lblTEPCPath control.
+        /// btnUploadTEPC control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblTEPCPath;
+        protected global::System.Web.UI.WebControls.Button btnUploadTEPC;
+        
+        /// <summary>
+        /// imgTEPCLoading control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlImage imgTEPCLoading;
+        
+        /// <summary>
+        /// lnkDownloadAvgTEPC control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.LinkButton lnkDownloadAvgTEPC;
+        
+        /// <summary>
+        /// lblErrorDescription control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblErrorDescription;
         
         /// <summary>
         /// btnRAMBrowse control.
@@ -46,16 +73,7 @@ namespace Projections_Capstone_Spring15 {
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnRAMBrowse;
-        
-        /// <summary>
-        /// lblRAMPath control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblRAMPath;
+        protected global::System.Web.UI.WebControls.FileUpload btnRAMBrowse;
         
         /// <summary>
         /// datepickerStart control.

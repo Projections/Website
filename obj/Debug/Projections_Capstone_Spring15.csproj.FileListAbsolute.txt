@@ -1,8 +1,6 @@
-c:\users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\bin\Projections_Capstone_Spring15.dll.config
-c:\users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\bin\Projections_Capstone_Spring15.dll
-c:\users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\bin\Projections_Capstone_Spring15.pdb
-c:\users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\obj\Debug\Projections_Capstone_Spring15.dll
-c:\users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\obj\Debug\Projections_Capstone_Spring15.pdb
+C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\bin\Projections_Capstone_Spring15.dll.config
+C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\bin\Projections_Capstone_Spring15.dll
+C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\bin\Projections_Capstone_Spring15.pdb
 C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\bin\AjaxMin.dll
 C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\bin\HtmlAgilityPack.dll
 C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\bin\Microsoft.Data.Edm.dll
@@ -43,4 +41,6 @@ C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Sp
 C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\bin\ru\System.Spatial.resources.dll
 C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\bin\zh-Hans\System.Spatial.resources.dll
 C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\bin\zh-Hant\System.Spatial.resources.dll
+C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\obj\Debug\Projections_Capstone_Spring15.dll
+C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\obj\Debug\Projections_Capstone_Spring15.pdb
 C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\obj\Debug\Projections_Capstone_Spring15.csprojResolveAssemblyReference.cache
