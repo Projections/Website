@@ -40,15 +40,6 @@ namespace Projections_Capstone_Spring15 {
         protected global::System.Web.UI.WebControls.Button btnUploadTEPC;
         
         /// <summary>
-        /// imgTEPCLoading control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.HtmlControls.HtmlImage imgTEPCLoading;
-        
-        /// <summary>
         /// lnkDownloadAvgTEPC control.
         /// </summary>
         /// <remarks>
@@ -56,6 +47,15 @@ namespace Projections_Capstone_Spring15 {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.LinkButton lnkDownloadAvgTEPC;
+        
+        /// <summary>
+        /// imgTEPCLoading control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlImage imgTEPCLoading;
         
         /// <summary>
         /// lblErrorDescription control.
@@ -74,6 +74,33 @@ namespace Projections_Capstone_Spring15 {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.FileUpload btnRAMBrowse;
+        
+        /// <summary>
+        /// btnUploadRAM_TLD control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnUploadRAM_TLD;
+        
+        /// <summary>
+        /// imgRAMLoading control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.HtmlControls.HtmlImage imgRAMLoading;
+        
+        /// <summary>
+        /// lblErrorDescription_RAM_TLD control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblErrorDescription_RAM_TLD;
         
         /// <summary>
         /// datepickerStart control.
