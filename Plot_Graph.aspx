@@ -47,6 +47,9 @@
                     <asp:TextBox runat="server" ID="datepickerEnd" />
                     </p>
                 </div>
+                <asp:Label ID="lblSMValues" runat="server">
+
+                </asp:Label>
             </div>
         </div>
         <%--Accordian code end--%>
@@ -58,11 +61,9 @@
             $(document).ready(function () {
                 $("#accordion").accordion();
             });
-            $(function () {
-                $('[id^=datepicker]').datepicker();
-            });
-
-
+            //$(function () {
+            //    $('[id^=datepicker]').datepicker();
+            //});
         </script>
 
     </form>

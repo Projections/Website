@@ -32,7 +32,7 @@ namespace Projections_Capstone_Spring15
                        //imgTEPCLoading.Attributes.Add("style","display:block;");
                        excelFilepath = string.Concat(Server.MapPath(btnTEPCBrowse.FileName));
                        btnTEPCBrowse.PostedFile.SaveAs(excelFilepath);
-                       CalculateAverage(excelFilepath);
+                       c.CalculateAverage(excelFilepath);
                        WriteToExcelFile();
                        imgTEPCLoading.Attributes.Add("style", "display:none;");
                    }
@@ -46,11 +46,7 @@ namespace Projections_Capstone_Spring15
                    lblErrorDescription.Text = "File not recognized";
                }
            }
-       
-        private void CalculateAverage(string getExcelFilePath)
-        {
-            c.CalculateAverage(getExcelFilePath);
-        }
+     
 
         private void WriteToExcelFile()
         {
@@ -79,6 +75,19 @@ namespace Projections_Capstone_Spring15
                         btnRAMBrowse.PostedFile.SaveAs(excelFilepath);
                        // CreateExcelFile(excelFilepath);
                        // WriteToExcelFile();
+                        if (datepickerStart.Text != null && datepickerEnd.Text != null)
+                        {
+                            double[] SMValues_Result = c.CalculateRAMValues(excelFilepath, datepickerStart.Text, datepickerEnd.Text);
+                            for (int i = 1; i <= SMValues_Result.Length; i++)
+                            {
+                                lblSMValues.Text += "<br />Value of SM" + i + "is " + SMValues_Result[i - 1];
+                            }
+                        }
+                        else
+                        {
+
+                            lblErrorDescription_RAM_TLD.Text = "Please Select Start and End Dates";
+                        }
                         imgRAMLoading.Attributes.Add("style", "display:none;");
                     }
                     catch (Exception ex)

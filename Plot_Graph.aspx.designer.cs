@@ -121,6 +121,15 @@ namespace Projections_Capstone_Spring15 {
         protected global::System.Web.UI.WebControls.TextBox datepickerEnd;
         
         /// <summary>
+        /// lblSMValues control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Label lblSMValues;
+        
+        /// <summary>
         /// btnPlot control.
         /// </summary>
         /// <remarks>
