@@ -47,6 +47,7 @@ namespace Projections_Capstone_Spring15
             }
             return correctExtension;
         }
+      
 
         public void CalculateAverage(string getExcelFilePath)
         {
@@ -329,7 +330,7 @@ namespace Projections_Capstone_Spring15
             String[] s = getsheet(path);
             for (int i = 0; i < s.Length; i++)
             {
-                String query = "SELECT * FROM ["+s[0]+"$]"; // You can use any different queries to get the data from the excel sheet
+                String query = "SELECT * FROM ["+s[0]+"]"; // You can use any different queries to get the data from the excel sheet
                 OleDbConnection conn = new OleDbConnection(connString);
                 if (conn.State == ConnectionState.Closed) conn.Open();
                 try
