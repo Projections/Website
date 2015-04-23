@@ -30,8 +30,7 @@ namespace Projections_Capstone_Spring15
 
         protected void Page_Load(object sender, EventArgs e)
         {
-           // loadSSNData();
-            consolidatedData();
+           consolidatedData();
 
         }
 
@@ -215,76 +214,12 @@ namespace Projections_Capstone_Spring15
 
         }
 
-
-        //public void loadSSNData()
-        //{
-        //    try
-        //    {
-
-        //        string str = "";
-        //        // string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Data\Names.txt");
-        //        string pathOfSSNFile = Server.MapPath("Sunspot_Dataset.xlsx");
-
-        //        Excel.Range range;
-        //        MyApp = new Excel.Application();
-        //        MyApp.Visible = false;
-        //        MyBook = MyApp.Workbooks.Open(pathOfSSNFile); //Giving the path to excel workbook to open and read the file.
-        //        MySheet = (Excel.Worksheet)MyBook.Sheets[1];
-        //        int rCnt, cCnt, YearMonth = 0, MNUmb = 0, SmNumb = 0;
-        //        range = MySheet.UsedRange;
-
-        //        for (cCnt = 1; cCnt <= range.Columns.Count; cCnt++)
-        //        {
-        //            str = Convert.ToString((range.Cells[1, cCnt] as Excel.Range).Value2);
-        //            if (!String.IsNullOrEmpty(str))
-        //            {
-        //                if (str.Contains("Year_Month")) // Storing the column number in dateCol which has Date in the first row
-        //                {
-        //                    YearMonth = cCnt;
-
-        //                }
-        //                if (str.Contains("Monthly Number")) // Storing the column number in doseCol which has Total in the first row.
-        //                {
-
-        //                    MNUmb = cCnt;
-        //                }
-        //                if (str.Contains("SmoothedNumber"))
-        //                {
-        //                    SmNumb = cCnt;
-
-        //                }
-        //            }
-        //        }
-        //        year_monthList = new string[range.Rows.Count];
-        //        monthlyNumberList = new Object[range.Rows.Count];
-        //        smoothedNumberList = new Object[range.Rows.Count];
-        //        for (rCnt = 1; rCnt <= range.Rows.Count; rCnt++)
-        //        {
-        //            string yearMonth_Data = (range.Cells[rCnt, YearMonth] as Excel.Range).Value2;
-        //            object monthlyNumberData = (range.Cells[rCnt, MNUmb] as Excel.Range).Value2;
-        //            object smootherNumberData = (range.Cells[rCnt, SmNumb] as Excel.Range).Value2;
-
-        //            year_monthList[rCnt - 1] = yearMonth_Data;
-        //            monthlyNumberList[rCnt - 1] = monthlyNumberData;
-        //            smoothedNumberList[rCnt - 1] = smootherNumberData;
-
-        //        }
-
-        //    }
-        //    catch (Exception e) { return; }
-        //}
-
-        public void consolidatedData()
+         public void consolidatedData()
         {
-          
-            string alldatafilePath = Server.MapPath("DataTillDate.xlsx");
-
+           string alldatafilePath = Server.MapPath("DataTillDate.xlsx");
             DataTable allData = getDataTable(alldatafilePath);
-
             var data = allData;
             int rowCount = allData.Rows.Count;
-           
-            datesList=new string[rowCount];
             avgDoseInAllDataList=new Object[rowCount];
             altitudeList=new Object[rowCount];
             monthlySSNList=new Object[rowCount];
@@ -300,7 +235,6 @@ namespace Projections_Capstone_Spring15
                     altitudeList[countForeach] = dR[2];
                     monthlySSNList[countForeach] = dR[3];
                     smoothedSSNList[countForeach] = dR[4];
-
                     countForeach++;
                 }
                 catch(Exception exc)
@@ -313,11 +247,9 @@ namespace Projections_Capstone_Spring15
 
         public static DataTable getDataTable(string path)
         {
-
             OleDbCommand cmd = new OleDbCommand();//This is the OleDB data base connection to the XLS file
             OleDbDataAdapter da = new OleDbDataAdapter();
             DataSet ds = new DataSet();
-
             String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + path + ";Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=2\"";
             String[] s = getsheet(path);
             for (int i = 0; i < s.Length; i++)
@@ -331,22 +263,17 @@ namespace Projections_Capstone_Spring15
                     da = new OleDbDataAdapter(cmd);
                     da.Fill(ds);
                     DataTable firstTable = ds.Tables[0];
-
                     return firstTable;
                 }
                 catch
                 {
-                    // Exception Msg 
-
                     return null;
                 }
                 finally
                 {
                     da.Dispose();
                     conn.Close();
-
                 }
-
             }
             return null;
         }
@@ -354,38 +281,23 @@ namespace Projections_Capstone_Spring15
         {
             OleDbConnection objConn = null;
             System.Data.DataTable dt = null;
-
             try
             {
-
-               // String connString = "Provider=Microsoft.Jet.OLEDB.4.0;" +"Data Source=" + excelFile + ";Extended Properties=Excel 8.0;";
-
                String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=Excel 12.0 xml;";
-
-               // string connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=\"Text;Excel 12.0;HDR=No;IMEX=1;FMT=Delimited\"";
-
                 objConn = new OleDbConnection(connString);
-
                 objConn.Open();
-
                 dt = objConn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
-
                 if (dt == null)
                 {
                     return null;
                 }
-
                 String[] excelSheets = new String[dt.Rows.Count];
                 int i = 0;
-
-
                 foreach (DataRow row in dt.Rows)
                 {
                     excelSheets[i] = row["TABLE_NAME"].ToString();
                     i++;
                 }
-
-
                 return excelSheets;
             }
             catch (Exception ex)
@@ -406,10 +318,5 @@ namespace Projections_Capstone_Spring15
                 }
             }
         }
-
-
     }
-
-
-
 }
