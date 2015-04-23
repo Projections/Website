@@ -45,3 +45,5 @@ C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Sp
 C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\obj\Debug\Projections_Capstone_Spring15.pdb
 C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\obj\Debug\Projections_Capstone_Spring15.csprojResolveAssemblyReference.cache
 C:\Users\saicharan\documents\visual studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\bin\DotNet.Highcharts.dll
+C:\Users\saicharan\Documents\Visual Studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\obj\Debug\Interop.MSDAOSP.dll
+C:\Users\saicharan\Documents\Visual Studio 2013\Projects\Projections_Capstone_Spring15\Projections_Capstone_Spring15\obj\Debug\Projections_Capstone_Spring15.csproj.ResolveComReference.cache

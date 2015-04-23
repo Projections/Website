@@ -2,6 +2,8 @@
 using DotNet.Highcharts.Options;
 using System;
 using System.Collections.Generic;
+using System.Data;
+using System.Data.OleDb;
 using System.IO;
 using System.Linq;
 using System.Web;
@@ -29,7 +31,9 @@ namespace Projections_Capstone_Spring15
 
         protected void Page_Load(object sender, EventArgs e)
         {
-            loadSSNData();
+           // loadSSNData();
+            consolidatedData();
+
         }
 
         protected void Button1_Click(object sender, EventArgs e)
@@ -166,15 +170,15 @@ namespace Projections_Capstone_Spring15
             //                }
             //    });
             DotNet.Highcharts.Highcharts chart = new DotNet.Highcharts.Highcharts("chart").InitChart(new Chart { ZoomType = DotNet.Highcharts.Enums.ZoomTypes.X })
-               .SetXAxis(new[]{
+            .SetXAxis(new[]{
                 new XAxis
                             {
                                Id="SunSpot_Axis",
                                 Categories = year_monthList,
                             }
                            
-                })
-               .SetSeries(new[]
+                });
+               chart.SetSeries(new[]
                 { new Series
                             {
                                 XAxis="SunSpot_Axis",
@@ -188,7 +192,6 @@ namespace Projections_Capstone_Spring15
                                 Data = new Data(smoothedNumberList)
                             }
                 });
-
 
             ltrChart.Text = chart.ToHtmlString();
 
@@ -252,7 +255,123 @@ namespace Projections_Capstone_Spring15
             }
             catch (Exception e) { return; }
         }
-       
+
+        public void consolidatedData()
+        {
+            List<double> smoothedSSNList = new List<double>();
+            List<double> monthlySSNList = new List<double>();
+            List<double> altitudeList = new List<double>();
+
+            var listOfallLists = new List<List<double>>();
+            //listOfallLists.Add(smoothedSSNList);
+            //listOfallLists.Add(monthlySSNList);
+            //listOfallLists.Add(altitudeList);
+
+            string alldatafilePath = Server.MapPath("DataTillDate.csv");
+
+            DataTable allData = getDataTable(alldatafilePath);
+
+            var data = allData;
+
+
+        }
+
+        public static DataTable getDataTable(string path)
+        {
+
+            OleDbCommand cmd = new OleDbCommand();//This is the OleDB data base connection to the XLS file
+            OleDbDataAdapter da = new OleDbDataAdapter();
+            DataSet ds = new DataSet();
+
+            String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + path + ";Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=2\"";
+            String[] s = getsheet(path);
+            for (int i = 0; i < s.Length; i++)
+            {
+                String query = "SELECT * FROM [" + s[0] + "]"; // You can use any different queries to get the data from the excel sheet
+                OleDbConnection conn = new OleDbConnection(connString);
+                if (conn.State == ConnectionState.Closed) conn.Open();
+                try
+                {
+                    cmd = new OleDbCommand(query, conn);
+                    da = new OleDbDataAdapter(cmd);
+                    da.Fill(ds);
+                    DataTable firstTable = ds.Tables[0];
+
+                    return firstTable;
+                }
+                catch
+                {
+                    // Exception Msg 
+
+                    return null;
+                }
+                finally
+                {
+                    da.Dispose();
+                    conn.Close();
+
+                }
+
+            }
+            return null;
+        }
+        private static String[] getsheet(string excelFile)
+        {
+            OleDbConnection objConn = null;
+            System.Data.DataTable dt = null;
+
+            try
+            {
+
+               // String connString = "Provider=Microsoft.Jet.OLEDB.4.0;" +"Data Source=" + excelFile + ";Extended Properties=Excel 8.0;";
+
+               // String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=Excel 12.0 xml; HRD=YES;";
+
+                string connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=Excel 8.0;HDR=YES;";
+
+                objConn = new OleDbConnection(connString);
+
+                objConn.Open();
+
+                dt = objConn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+
+                if (dt == null)
+                {
+                    return null;
+                }
+
+                String[] excelSheets = new String[dt.Rows.Count];
+                int i = 0;
+
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    excelSheets[i] = row["TABLE_NAME"].ToString();
+                    i++;
+                }
+
+
+                return excelSheets;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                // Clean up.
+                if (objConn != null)
+                {
+                    objConn.Close();
+                    objConn.Dispose();
+                }
+                if (dt != null)
+                {
+                    dt.Dispose();
+                }
+            }
+        }
+
 
     }
 

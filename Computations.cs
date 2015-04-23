@@ -199,8 +199,8 @@ namespace Projections_Capstone_Spring15
             DataTable d = s(path);//XLS file is taken as a data table
             if (o > 185 || o < 31)
             {
-                //  Console.WriteLine("The days between start and end dates should be betwee 31 and 185 days");
-                Environment.Exit(0);
+                  // "The days between start and end dates should be betwee 31 and 185 days");
+                //Environment.Exit(0);
             }
             var d1 = d.Rows[0];//Considering the required rows from the data table
             DataRow[] result = d.Select("enddate >= '" + startdate + "' AND startdate<='" + enddate + "' ");
@@ -366,10 +366,10 @@ namespace Projections_Capstone_Spring15
             try
             {
 
-                //String connString = "Provider=Microsoft.Jet.OLEDB.4.0;" +
-                //  "Data Source=" + excelFile + ";Extended Properties=Excel 8.0;";
+                String connString = "Provider=Microsoft.Jet.OLEDB.4.0;" +
+                  "Data Source=" + excelFile + ";Extended Properties=Excel 8.0;";
 
-                String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=2\"";
+               // String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=2\"";
             
                 objConn = new OleDbConnection(connString);
 
