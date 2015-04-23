@@ -366,10 +366,10 @@ namespace Projections_Capstone_Spring15
             try
             {
 
-                String connString = "Provider=Microsoft.Jet.OLEDB.4.0;" +
-                  "Data Source=" + excelFile + ";Extended Properties=Excel 8.0;";
+                //String connString = "Provider=Microsoft.Jet.OLEDB.4.0;" +
+                //  "Data Source=" + excelFile + ";Extended Properties=Excel 8.0;";
 
-               // String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=2\"";
+               String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=2\"";
             
                 objConn = new OleDbConnection(connString);
 

@@ -21,12 +21,11 @@ namespace Projections_Capstone_Spring15
         private static Excel.Application MyApp = null;
         private static Excel.Worksheet MySheet = null;
         public static string excelFilepath = "";
-        string[] year_monthList;
-        Object[] monthlyNumberList;
-        Object[] smoothedNumberList;
-        //List<string> year_monthList = new List<string>();
-        //List<string> monthlyNUmberList = new List<string>();
-        //List<string> smoothedNumberList = new List<string>();
+        Object[] smoothedSSNList;
+        Object[] monthlySSNList;
+        Object[] altitudeList;
+        string[] datesList;
+        Object[] avgDoseInAllDataList;
         Computations c = new Computations();
 
         protected void Page_Load(object sender, EventArgs e)
@@ -169,28 +168,47 @@ namespace Projections_Capstone_Spring15
             //                    Data = new Data(new object[] { 100, 120, 95 })
             //                }
             //    });
-            DotNet.Highcharts.Highcharts chart = new DotNet.Highcharts.Highcharts("chart").InitChart(new Chart { ZoomType = DotNet.Highcharts.Enums.ZoomTypes.X })
+            DotNet.Highcharts.Highcharts chart = new DotNet.Highcharts.Highcharts("chart").InitChart(new Chart { 
+                    ZoomType = DotNet.Highcharts.Enums.ZoomTypes.X,
+            })
             .SetXAxis(new[]{
                 new XAxis
                             {
+                             
                                Id="SunSpot_Axis",
-                                Categories = year_monthList,
-                            }
+                                Categories = datesList,
+                                Labels=new XAxisLabels{Step=15, StaggerLines=1}
+}
+                            
+                            
                            
                 });
+            
                chart.SetSeries(new[]
                 { new Series
                             {
-                                XAxis="SunSpot_Axis",
-                                Name="First Series",
-                                Data = new Data(monthlyNumberList)
+                                
+                                Name="Smoothed SSN",
+                                Data = new Data(smoothedSSNList)
                             },
                     new Series
                             {
-                                XAxis="SunSpot_Axis",
-                                Name="Second series",
-                                Data = new Data(smoothedNumberList)
-                            }
+                                
+                                Name="Altitude",
+                                Data = new Data(altitudeList)
+                            },
+                    new Series
+                            {
+                                
+                                Name="Monthly SSN",
+                                Data = new Data(monthlySSNList)
+                            } ,
+                    new Series
+                            {
+                                
+                                Name="Average Dose Values",
+                                Data = new Data(avgDoseInAllDataList)
+                            } 
                 });
 
             ltrChart.Text = chart.ToHtmlString();
@@ -198,81 +216,98 @@ namespace Projections_Capstone_Spring15
         }
 
 
-        public void loadSSNData()
-        {
-            try
-            {
+        //public void loadSSNData()
+        //{
+        //    try
+        //    {
 
-                string str = "";
-                // string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Data\Names.txt");
-                string pathOfSSNFile = Server.MapPath("Sunspot_Dataset.xlsx");
+        //        string str = "";
+        //        // string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), @"Data\Names.txt");
+        //        string pathOfSSNFile = Server.MapPath("Sunspot_Dataset.xlsx");
 
-                Excel.Range range;
-                MyApp = new Excel.Application();
-                MyApp.Visible = false;
-                MyBook = MyApp.Workbooks.Open(pathOfSSNFile); //Giving the path to excel workbook to open and read the file.
-                MySheet = (Excel.Worksheet)MyBook.Sheets[1];
-                int rCnt, cCnt, YearMonth = 0, MNUmb = 0, SmNumb = 0;
-                range = MySheet.UsedRange;
+        //        Excel.Range range;
+        //        MyApp = new Excel.Application();
+        //        MyApp.Visible = false;
+        //        MyBook = MyApp.Workbooks.Open(pathOfSSNFile); //Giving the path to excel workbook to open and read the file.
+        //        MySheet = (Excel.Worksheet)MyBook.Sheets[1];
+        //        int rCnt, cCnt, YearMonth = 0, MNUmb = 0, SmNumb = 0;
+        //        range = MySheet.UsedRange;
 
-                for (cCnt = 1; cCnt <= range.Columns.Count; cCnt++)
-                {
-                    str = Convert.ToString((range.Cells[1, cCnt] as Excel.Range).Value2);
-                    if (!String.IsNullOrEmpty(str))
-                    {
-                        if (str.Contains("Year_Month")) // Storing the column number in dateCol which has Date in the first row
-                        {
-                            YearMonth = cCnt;
+        //        for (cCnt = 1; cCnt <= range.Columns.Count; cCnt++)
+        //        {
+        //            str = Convert.ToString((range.Cells[1, cCnt] as Excel.Range).Value2);
+        //            if (!String.IsNullOrEmpty(str))
+        //            {
+        //                if (str.Contains("Year_Month")) // Storing the column number in dateCol which has Date in the first row
+        //                {
+        //                    YearMonth = cCnt;
 
-                        }
-                        if (str.Contains("Monthly Number")) // Storing the column number in doseCol which has Total in the first row.
-                        {
+        //                }
+        //                if (str.Contains("Monthly Number")) // Storing the column number in doseCol which has Total in the first row.
+        //                {
 
-                            MNUmb = cCnt;
-                        }
-                        if (str.Contains("SmoothedNumber"))
-                        {
-                            SmNumb = cCnt;
+        //                    MNUmb = cCnt;
+        //                }
+        //                if (str.Contains("SmoothedNumber"))
+        //                {
+        //                    SmNumb = cCnt;
 
-                        }
-                    }
-                }
-                year_monthList = new string[range.Rows.Count];
-                monthlyNumberList = new Object[range.Rows.Count];
-                smoothedNumberList = new Object[range.Rows.Count];
-                for (rCnt = 1; rCnt <= range.Rows.Count; rCnt++)
-                {
-                    string yearMonth_Data = (range.Cells[rCnt, YearMonth] as Excel.Range).Value2;
-                    object monthlyNumberData = (range.Cells[rCnt, MNUmb] as Excel.Range).Value2;
-                    object smootherNumberData = (range.Cells[rCnt, SmNumb] as Excel.Range).Value2;
+        //                }
+        //            }
+        //        }
+        //        year_monthList = new string[range.Rows.Count];
+        //        monthlyNumberList = new Object[range.Rows.Count];
+        //        smoothedNumberList = new Object[range.Rows.Count];
+        //        for (rCnt = 1; rCnt <= range.Rows.Count; rCnt++)
+        //        {
+        //            string yearMonth_Data = (range.Cells[rCnt, YearMonth] as Excel.Range).Value2;
+        //            object monthlyNumberData = (range.Cells[rCnt, MNUmb] as Excel.Range).Value2;
+        //            object smootherNumberData = (range.Cells[rCnt, SmNumb] as Excel.Range).Value2;
 
-                    year_monthList[rCnt - 1] = yearMonth_Data;
-                    monthlyNumberList[rCnt - 1] = monthlyNumberData;
-                    smoothedNumberList[rCnt - 1] = smootherNumberData;
+        //            year_monthList[rCnt - 1] = yearMonth_Data;
+        //            monthlyNumberList[rCnt - 1] = monthlyNumberData;
+        //            smoothedNumberList[rCnt - 1] = smootherNumberData;
 
-                }
+        //        }
 
-            }
-            catch (Exception e) { return; }
-        }
+        //    }
+        //    catch (Exception e) { return; }
+        //}
 
         public void consolidatedData()
         {
-            List<double> smoothedSSNList = new List<double>();
-            List<double> monthlySSNList = new List<double>();
-            List<double> altitudeList = new List<double>();
-
-            var listOfallLists = new List<List<double>>();
-            //listOfallLists.Add(smoothedSSNList);
-            //listOfallLists.Add(monthlySSNList);
-            //listOfallLists.Add(altitudeList);
-
-            string alldatafilePath = Server.MapPath("DataTillDate.csv");
+          
+            string alldatafilePath = Server.MapPath("DataTillDate.xlsx");
 
             DataTable allData = getDataTable(alldatafilePath);
 
             var data = allData;
+            int rowCount = allData.Rows.Count;
+           
+            datesList=new string[rowCount];
+            avgDoseInAllDataList=new Object[rowCount];
+            altitudeList=new Object[rowCount];
+            monthlySSNList=new Object[rowCount];
+            smoothedSSNList = new Object[rowCount];
+            int countForeach=0;
+            foreach(DataRow dR in allData.Rows)
+            {
+                try
+                {
+                    DateTime day = DateTime.Parse(dR[0].ToString());
+                    datesList[countForeach] = day.Month + "/" + day.Year;
+                    avgDoseInAllDataList[countForeach] = dR[1];
+                    altitudeList[countForeach] = dR[2];
+                    monthlySSNList[countForeach] = dR[3];
+                    smoothedSSNList[countForeach] = dR[4];
 
+                    countForeach++;
+                }
+                catch(Exception exc)
+                {
+
+                }
+            }
 
         }
 
@@ -325,9 +360,9 @@ namespace Projections_Capstone_Spring15
 
                // String connString = "Provider=Microsoft.Jet.OLEDB.4.0;" +"Data Source=" + excelFile + ";Extended Properties=Excel 8.0;";
 
-               // String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=Excel 12.0 xml; HRD=YES;";
+               String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=Excel 12.0 xml;";
 
-                string connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=Excel 8.0;HDR=YES;";
+               // string connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=\"Text;Excel 12.0;HDR=No;IMEX=1;FMT=Delimited\"";
 
                 objConn = new OleDbConnection(connString);
 
