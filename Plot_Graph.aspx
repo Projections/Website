@@ -8,7 +8,7 @@
     <title>Plot Graph</title>
     <link href="Styles/main.css" rel="stylesheet" />
     <link href="Styles/jquery-ui.css" rel="stylesheet" />
-     <script src="Scripts/jquery.js"></script>
+    <script src="Scripts/jquery.js"></script>
 </head>
 <body>
     <form id="frmGraphs" runat="server">
@@ -48,8 +48,8 @@
                     <asp:TextBox runat="server" ID="datepickerEnd" />
                     </p>
                 </div>
-                <asp:Label ID="lblSMValues" runat="server"> <br />
-
+                <div style="clear: both"></div>
+                <asp:Label ID="lblSMValues" runat="server">
                 </asp:Label>
             </div>
         </div>
@@ -58,7 +58,7 @@
         <div>
             <asp:Literal ID="ltrChart" runat="server"></asp:Literal>
         </div>
-       
+
         <%--    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>--%>
         <script src="Scripts/jquery-ui.js"></script>
         <script src="Scripts/Highcharts-4.0.1/js/highcharts.js"></script>
@@ -70,7 +70,7 @@
             //    $('[id^=datepicker]').datepicker();
             //});
             $("#ltrChart").highcharts({
-                chart:{zoomType:'xy'}
+                chart: { zoomType: 'xy' }
             });
         </script>
 

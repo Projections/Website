@@ -30,7 +30,7 @@ namespace Projections_Capstone_Spring15
 
         protected void Page_Load(object sender, EventArgs e)
         {
-           consolidatedData();
+
 
         }
 
@@ -122,7 +122,7 @@ namespace Projections_Capstone_Spring15
 
         protected void btnPlot_Click(object sender, EventArgs e)
         {
-
+            consolidatedData();
             //DotNet.Highcharts.Highcharts chart = new DotNet.Highcharts.Highcharts("chart").InitChart(new Chart { ZoomType = DotNet.Highcharts.Enums.ZoomTypes.X })
             //    .SetXAxis(new []{
             //    new XAxis
@@ -174,42 +174,62 @@ namespace Projections_Capstone_Spring15
                 new XAxis
                             {
                              
-                               Id="SunSpot_Axis",
+                               Type=DotNet.Highcharts.Enums.AxisTypes.Datetime,
                                 Categories = datesList,
-                                Labels=new XAxisLabels{Step=15, StaggerLines=1}
+                               Labels=new XAxisLabels{Step=10, StaggerLines=1}
+                             // MinRange=30*24
 }
-                            
-                            
                            
                 });
-            
+            chart.SetTitle(new Title { Text = "Space Weather and Altitude" });
                chart.SetSeries(new[]
                 { new Series
                             {
                                 
+                                YAxis="Sunspot",
                                 Name="Smoothed SSN",
                                 Data = new Data(smoothedSSNList)
+                                //PlotOptionsLine=new PlotOptionsLine{PointInterval=24*24*3600000, PointStart=new PointStart(Convert.ToDateTime(datesList[0]))}
                             },
                     new Series
                             {
-                                
+                                YAxis="Altitude",   
                                 Name="Altitude",
                                 Data = new Data(altitudeList)
                             },
                     new Series
                             {
-                                
+                                YAxis="Sunspot",
                                 Name="Monthly SSN",
                                 Data = new Data(monthlySSNList)
                             } ,
                     new Series
                             {
-                                
+                                 YAxis="Altitude",   
                                 Name="Average Dose Values",
                                 Data = new Data(avgDoseInAllDataList)
                             } 
                 });
-
+               chart.SetYAxis(new[]{
+                   new YAxis
+                   {
+                       Id="Sunspot",
+                       Min=0,
+                       Max=400,
+                       TickInterval=25,
+                       Title=new YAxisTitle { Text = "Sunspot Number" }//,
+                       //Labels=new YAxisLabels{Format="{value} km"}
+                   },
+                   new YAxis
+                   {
+                       Id="Altitude",
+                       Min=0,
+                       Max=500,
+                       TickInterval=30,
+                       Opposite=true,
+                       Title=new YAxisTitle { Text = "Altitude [km] and dose values [µGy]" }
+                   }}
+                   );
             ltrChart.Text = chart.ToHtmlString();
 
         }
@@ -224,6 +244,7 @@ namespace Projections_Capstone_Spring15
             altitudeList=new Object[rowCount];
             monthlySSNList=new Object[rowCount];
             smoothedSSNList = new Object[rowCount];
+             datesList=new string[rowCount];
             int countForeach=0;
             foreach(DataRow dR in allData.Rows)
             {
