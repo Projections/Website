@@ -27,6 +27,9 @@ namespace Projections_Capstone_Spring15
         string[] datesList;
         Object[] avgDoseInAllDataList;
         Computations c = new Computations();
+        public static List<DateTime> StartdateList = new List<DateTime>();
+        public static List<DateTime> EnddateList = new List<DateTime>();
+        public static List<double> averagesList = new List<double>();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -122,6 +125,9 @@ namespace Projections_Capstone_Spring15
 
         protected void btnPlot_Click(object sender, EventArgs e)
         {
+            DataTable dt = readFile();
+            isValidData(dt);
+            calculateAverages(dt);
             consolidatedData();
             //DotNet.Highcharts.Highcharts chart = new DotNet.Highcharts.Highcharts("chart").InitChart(new Chart { ZoomType = DotNet.Highcharts.Enums.ZoomTypes.X })
             //    .SetXAxis(new []{
@@ -167,50 +173,68 @@ namespace Projections_Capstone_Spring15
             //                    Data = new Data(new object[] { 100, 120, 95 })
             //                }
             //    });
-            DotNet.Highcharts.Highcharts chart = new DotNet.Highcharts.Highcharts("chart").InitChart(new Chart { 
-                    ZoomType = DotNet.Highcharts.Enums.ZoomTypes.X,
+            DotNet.Highcharts.Highcharts chart = new DotNet.Highcharts.Highcharts("chart").InitChart(new Chart
+            {
+                ZoomType = DotNet.Highcharts.Enums.ZoomTypes.X,
             })
             .SetXAxis(new[]{
                 new XAxis
                             {
-                             
-                               Type=DotNet.Highcharts.Enums.AxisTypes.Datetime,
+                             Id="Month Axes",
+                              // Type=DotNet.Highcharts.Enums.AxisTypes.Datetime,
                                 Categories = datesList,
                                Labels=new XAxisLabels{Step=10, StaggerLines=1}
                              // MinRange=30*24
-}
+                            }
                            
-                });
+                , new XAxis 
+                            { 
+                                Id="new X",
+                                Categories=new [] {"Category1", "Category2", "Category3"}
+                            }
+            });
             chart.SetTitle(new Title { Text = "Space Weather and Altitude" });
-               chart.SetSeries(new[]
+            chart.SetSeries(new[]
                 { new Series
                             {
                                 
                                 YAxis="Sunspot",
+                                XAxis="Month Axes",
                                 Name="Smoothed SSN",
                                 Data = new Data(smoothedSSNList)
                                 //PlotOptionsLine=new PlotOptionsLine{PointInterval=24*24*3600000, PointStart=new PointStart(Convert.ToDateTime(datesList[0]))}
                             },
                     new Series
                             {
+                                XAxis="Month Axes",
                                 YAxis="Altitude",   
                                 Name="Altitude",
                                 Data = new Data(altitudeList)
                             },
                     new Series
                             {
+                                XAxis="Month Axes",
                                 YAxis="Sunspot",
                                 Name="Monthly SSN",
                                 Data = new Data(monthlySSNList)
                             } ,
                     new Series
                             {
+                                XAxis="Month Axes",
                                  YAxis="Altitude",   
                                 Name="Average Dose Values",
                                 Data = new Data(avgDoseInAllDataList)
-                            } 
+                            } ,
+                    new Series
+                            {
+                            YAxis="Altitude",
+                            //XAxis="new X",
+                            Type=DotNet.Highcharts.Enums.ChartTypes.Columnrange,
+                            Name="Dummy Data",
+                           // Data=new Data(new object[,]{{low=12.9,high=6.8},{12.5,99.8},{32.5,56.4}})
+}
                 });
-               chart.SetYAxis(new[]{
+            chart.SetYAxis(new[]{
                    new YAxis
                    {
                        Id="Sunspot",
@@ -229,24 +253,24 @@ namespace Projections_Capstone_Spring15
                        Opposite=true,
                        Title=new YAxisTitle { Text = "Altitude [km] and dose values [µGy]" }
                    }}
-                   );
+                );
             ltrChart.Text = chart.ToHtmlString();
 
         }
 
-         public void consolidatedData()
+        public void consolidatedData()
         {
-           string alldatafilePath = Server.MapPath("DataTillDate.xlsx");
+            string alldatafilePath = Server.MapPath("DataTillDate.xlsx");
             DataTable allData = getDataTable(alldatafilePath);
             var data = allData;
             int rowCount = allData.Rows.Count;
-            avgDoseInAllDataList=new Object[rowCount];
-            altitudeList=new Object[rowCount];
-            monthlySSNList=new Object[rowCount];
+            avgDoseInAllDataList = new Object[rowCount];
+            altitudeList = new Object[rowCount];
+            monthlySSNList = new Object[rowCount];
             smoothedSSNList = new Object[rowCount];
-             datesList=new string[rowCount];
-            int countForeach=0;
-            foreach(DataRow dR in allData.Rows)
+            datesList = new string[rowCount];
+            int countForeach = 0;
+            foreach (DataRow dR in allData.Rows)
             {
                 try
                 {
@@ -258,7 +282,7 @@ namespace Projections_Capstone_Spring15
                     smoothedSSNList[countForeach] = dR[4];
                     countForeach++;
                 }
-                catch(Exception exc)
+                catch (Exception exc)
                 {
 
                 }
@@ -304,7 +328,7 @@ namespace Projections_Capstone_Spring15
             System.Data.DataTable dt = null;
             try
             {
-               String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=Excel 12.0 xml;";
+                String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=Excel 12.0 xml;";
                 objConn = new OleDbConnection(connString);
                 objConn.Open();
                 dt = objConn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
@@ -339,5 +363,100 @@ namespace Projections_Capstone_Spring15
                 }
             }
         }
+
+        public static DataTable readFile()
+        {
+            DataTable firstTable = new DataTable();
+            OleDbConnection objConn = null;
+            System.Data.DataTable dt = null;
+            OleDbCommand cmd = new OleDbCommand();//This is the OleDB data base connection to the XLS file
+            OleDbDataAdapter da = new OleDbDataAdapter();
+            DataSet ds = new DataSet();
+
+            String[] excelSheets;
+            string excelFile = "Target CPD.xlsx";
+            try
+            {
+                String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=Excel 12.0 xml;";
+                objConn = new OleDbConnection(connString);
+                objConn.Open();
+                dt = objConn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+                if (dt == null)
+                {
+                    // return null;
+                    Console.WriteLine("No data found");
+                }
+                excelSheets = new String[dt.Rows.Count];
+                int i = 0;
+                foreach (DataRow row in dt.Rows)
+                {
+                    excelSheets[i] = row["TABLE_NAME"].ToString();
+                    i++;
+                }
+                String query = "SELECT MissionStart,MIssionStop,ProxyCPDData FROM [" + excelSheets[0] + "]"; // You can use any different queries to get the data from the excel sheet
+                OleDbConnection conn = new OleDbConnection(connString);
+
+                cmd = new OleDbCommand(query, conn);
+                da = new OleDbDataAdapter(cmd);
+                da.Fill(ds);
+                firstTable = ds.Tables[0];
+                // return firstTable;
+                return firstTable;
+            }
+            catch (Exception exc)
+            {
+
+            }
+
+            return firstTable;
+        }
+
+        public static bool isValidData(DataTable dt)
+        {
+            // bool isDataValid = true;
+            //int count = 0;
+            for (int i = 0; i < dt.Rows.Count - 1; i++)
+            {
+                DataRow dr1 = dt.Rows[i];
+                DataRow dr2 = dt.Rows[i + 1];
+                DateTime endDay = DateTime.Parse(dr1[1].ToString());
+                DateTime nextBeginDay = DateTime.Parse(dr2[0].ToString());
+                double dayDifference = endDay.Subtract(nextBeginDay).TotalDays;
+                if (dayDifference < 0.0)
+                {
+                    Console.WriteLine("Error in line: " + i);
+                    Console.ReadKey();
+                    return false;
+                }
+            }
+            //Console.WriteLine("Read Successful");
+            // Console.ReadKey();
+            return true;
+        }
+
+        public static void calculateAverages(DataTable dt)
+        {
+            DateTime StartDay, EndDay;
+            foreach (DataRow dr in dt.Rows)
+            {
+                //GEt the first day and last day
+                StartDay = Convert.ToDateTime(dr[0].ToString());
+                EndDay = Convert.ToDateTime(dr[1].ToString());
+
+                //Get the total number of days
+                double TotalDays = Math.Ceiling((EndDay.Date - StartDay.Date).TotalDays + 1);
+
+                //Calculate the average CPD for the given period
+                double AvgCPD = Convert.ToDouble(dr[2]) / TotalDays;
+
+                //Add the average CPD, first month and last month values to the list
+                averagesList.Add(AvgCPD);
+                StartdateList.Add(new DateTime(StartDay.Year, StartDay.Month, 1));
+                EnddateList.Add(new DateTime(EndDay.Year, EndDay.Month, 1));
+
+
+            }
+        }
+
     }
 }
