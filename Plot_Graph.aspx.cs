@@ -10,6 +10,8 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using Excel = Microsoft.Office.Interop.Excel;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Projections_Capstone_Spring15
 {
@@ -26,6 +28,15 @@ namespace Projections_Capstone_Spring15
         Object[] altitudeList;
         string[] datesList;
         Object[] avgDoseInAllDataList;
+
+        string[] strEndDate;
+        string[] strStartDate;
+
+        object[] loc1 ;
+        object[] loc2 ;
+        object[] loc3 ;
+        object[] loc4;
+
         Computations c = new Computations();
         public static List<DateTime> StartdateList = new List<DateTime>();
         public static List<DateTime> EnddateList = new List<DateTime>();
@@ -125,9 +136,11 @@ namespace Projections_Capstone_Spring15
 
         protected void btnPlot_Click(object sender, EventArgs e)
         {
+            RAMLocWiseValues();
+
             DataTable dt = readFile();
             isValidData(dt);
-            calculateAverages(dt);
+             calculateAverages(dt);
             consolidatedData();
             //DotNet.Highcharts.Highcharts chart = new DotNet.Highcharts.Highcharts("chart").InitChart(new Chart { ZoomType = DotNet.Highcharts.Enums.ZoomTypes.X })
             //    .SetXAxis(new []{
@@ -224,15 +237,16 @@ namespace Projections_Capstone_Spring15
                                  YAxis="Altitude",   
                                 Name="Average Dose Values",
                                 Data = new Data(avgDoseInAllDataList)
-                            } ,
-                    new Series
-                            {
-                            YAxis="Altitude",
-                            //XAxis="new X",
-                            Type=DotNet.Highcharts.Enums.ChartTypes.Columnrange,
-                            Name="Dummy Data",
-                           // Data=new Data(new object[,]{{low=12.9,high=6.8},{12.5,99.8},{32.5,56.4}})
-}
+                            }
+//                            } ,
+//                    new Series
+//                            {
+//                            YAxis="Altitude",
+//                            //XAxis="new X",
+//                            Type=DotNet.Highcharts.Enums.ChartTypes.Columnrange,
+//                            Name="Dummy Data",
+//                           // Data=new Data(new object[,]{{low=12.9,high=6.8},{12.5,99.8},{32.5,56.4}})
+//}
                 });
             chart.SetYAxis(new[]{
                    new YAxis
@@ -290,7 +304,7 @@ namespace Projections_Capstone_Spring15
 
         }
 
-        public static DataTable getDataTable(string path)
+        public DataTable getDataTable(string path)
         {
             OleDbCommand cmd = new OleDbCommand();//This is the OleDB data base connection to the XLS file
             OleDbDataAdapter da = new OleDbDataAdapter();
@@ -322,7 +336,7 @@ namespace Projections_Capstone_Spring15
             }
             return null;
         }
-        private static String[] getsheet(string excelFile)
+        private String[] getsheet(string excelFile)
         {
             OleDbConnection objConn = null;
             System.Data.DataTable dt = null;
@@ -364,7 +378,7 @@ namespace Projections_Capstone_Spring15
             }
         }
 
-        public static DataTable readFile()
+        public DataTable readFile()
         {
             DataTable firstTable = new DataTable();
             OleDbConnection objConn = null;
@@ -374,7 +388,7 @@ namespace Projections_Capstone_Spring15
             DataSet ds = new DataSet();
 
             String[] excelSheets;
-            string excelFile = "Target CPD.xlsx";
+            string excelFile =  Server.MapPath("Target CPD.xlsx");
             try
             {
                 String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=Excel 12.0 xml;";
@@ -457,6 +471,247 @@ namespace Projections_Capstone_Spring15
 
             }
         }
+
+        public  void RAMLocWiseValues()
+        {
+           // string pathOfRAMLocWise = Directory.GetCurrentDirectory();
+            DataTable d = s_RAMLocWise(Server.MapPath("RAM.xls"));
+            int i = 0;
+            List<Class1> klist = new List<Class1>();
+            var sm1 = d.Select("location='(SM-1)'");
+            var sm2 = d.Select("location='(SM-2)'");
+            var sm3 = d.Select("location='(SM-3)'");
+            var sm4 = d.Select("location='(SM-4)'");
+            while (i < sm1.Length)
+            {
+                var f = sm1[i];
+                Class1 f1 = new Class1();
+                //sm1
+                f1.start = (DateTime)f["StartDate"];
+                f1.end = (DateTime)f["EndDate"];
+                double days = (f1.start - f1.end).TotalDays;
+                if (-(f1.start - f1.end).TotalDays < 181)
+                {
+                    f1.end = getEndDate_RAMLocWise(f1.start);
+
+                }
+                int row = i;
+                Boolean err = false;
+                int j = i;
+                while ((DateTime)sm1[i]["EndDate"] < f1.end)
+                {
+                    row++;
+                    i++;
+                    if (i == sm1.Length)
+                    {
+                        err = true;
+                        break;
+
+                    }
+
+                }
+                if (err) break;
+                f1.values = new Dictionary<string, double>();
+                double ds1 = 0, ds2 = 0, ds3 = 0, ds4 = 0;
+                i = j;
+
+
+                for (; i <= row; i++)
+                {
+                    if (i == 0)
+                    {
+                        ds1 += getDose_RAMLocWise(sm1[i], f1.end, sm1[i]);
+
+                        ds2 += getDose_RAMLocWise(sm2[i], f1.end, sm1[i]);
+                        ds3 += getDose_RAMLocWise(sm3[i], f1.end, sm1[i]);
+                        ds4 += getDose_RAMLocWise(sm4[i], f1.end, sm1[i]);
+
+
+
+                    }
+                    else
+                    {
+                        ds1 += getDose_RAMLocWise(sm1[i], f1.end, sm1[i - 1]);
+
+                        ds2 += getDose_RAMLocWise(sm2[i], f1.end, sm1[i - 1]);
+                        ds3 += getDose_RAMLocWise(sm3[i], f1.end, sm1[i - 1]);
+                        ds4 += getDose_RAMLocWise(sm4[i], f1.end, sm1[i - 1]);
+                    }
+                }
+                f1.values.Add("1", ds1);
+                f1.values.Add("2", ds2);
+                f1.values.Add("3", ds3);
+                f1.values.Add("4", ds4);
+                klist.Add(f1);
+                i = j + 1;
+                //SMvaluesDates.Add(kl)
+
+            }
+
+
+            strEndDate = new string[klist.Count];
+             strStartDate = new string[klist.Count];
+
+             loc1 = new object[klist.Count];
+            loc2 = new object[klist.Count];
+           loc3 = new object[klist.Count];
+             loc4 = new object[klist.Count];
+
+            for (int ii = 0; ii < klist.Count; ii++)
+            {
+                strStartDate[ii] = klist[ii].start.ToString();
+                strEndDate[ii] = klist[ii].end.ToString();
+                loc1[ii] = klist[ii].values["1"];
+                loc2[ii] = klist[ii].values["2"];
+                loc3[ii] = klist[ii].values["3"];
+                loc4[ii] = klist[ii].values["4"];
+            }
+
+
+        }
+
+
+
+        public static double getDose_RAMLocWise(DataRow s1, DateTime end, DataRow s)
+        {
+            double abs, texpday;
+            abs = (double)s1["AbsorbedDose"];
+            texpday = (double)s1["TotalExpoDay"];
+            double dose = (double)abs / (double)texpday;
+            var sf = (DateTime)s1["startdate"];
+            var sf1 = (DateTime)s["enddate"];
+            double minusdays = 0;
+            if (sf < sf1)
+            {
+                minusdays = (sf1 - sf).TotalDays;
+            }
+
+            var f1 = (DateTime)s1["EndDate"];
+            if (end >= f1)
+            {
+                return Math.Round(abs, 2);
+
+
+            }
+            else
+            {
+                double d = -(((DateTime)s1["StartDate"] - end).TotalDays);
+                return Math.Round(dose * (d - minusdays), 2);
+            }
+
+
+
+        }
+        public static DateTime getEndDate_RAMLocWise(DateTime t)
+        {
+            DateTime d = t.AddDays(181);
+            return d;
+
+        }
+        public static DataTable s_RAMLocWise(string path)
+        {
+
+            OleDbCommand cmd = new OleDbCommand();
+            OleDbDataAdapter da = new OleDbDataAdapter();
+            DataSet ds = new DataSet();
+
+            String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + path + ";Extended Properties=\"Excel 12.0;HDR=Yes;IMEX=2\"";
+            String[] s = getsheet_RAMLocWise(path);
+            for (int i = 0; i < s.Length; i++)
+            {
+                String query = "SELECT * FROM [" + s[i] + "]";
+                OleDbConnection conn = new OleDbConnection(connString);
+                if (conn.State == ConnectionState.Closed) conn.Open();
+                try
+                {
+                    cmd = new OleDbCommand(query, conn);
+                    da = new OleDbDataAdapter(cmd);
+                    da.Fill(ds);
+                    DataTable firstTable = ds.Tables[0];
+
+                    return firstTable;
+                }
+                catch
+                {
+
+
+                    return null;
+                }
+                finally
+                {
+                    da.Dispose();
+                    conn.Close();
+
+                }
+
+            }
+            return null;
+        }
+        private static String[] getsheet_RAMLocWise(string excelFile)
+        {
+            OleDbConnection objConn = null;
+            System.Data.DataTable dt = null;
+
+            try
+            {
+
+                String connString = "Provider=Microsoft.Jet.OLEDB.4.0;" +
+                  "Data Source=" + excelFile + ";Extended Properties=Excel 8.0;";
+
+                objConn = new OleDbConnection(connString);
+
+                objConn.Open();
+
+                dt = objConn.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, null);
+
+                if (dt == null)
+                {
+                    return null;
+                }
+
+                String[] excelSheets = new String[dt.Rows.Count];
+                int i = 0;
+
+
+                foreach (DataRow row in dt.Rows)
+                {
+                    excelSheets[i] = row["TABLE_NAME"].ToString();
+                    i++;
+                }
+
+
+                return excelSheets;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                // Clean up.
+                if (objConn != null)
+                {
+                    objConn.Close();
+                    objConn.Dispose();
+                }
+                if (dt != null)
+                {
+                    dt.Dispose();
+                }
+            }
+        }
+
+
+        class Class1
+        {
+            public DateTime start;
+            public DateTime end;
+            public Dictionary<string, double> values;
+
+
+
+        }
+
 
     }
 }
