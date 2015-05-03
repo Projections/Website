@@ -19,9 +19,7 @@ namespace Projections_Capstone_Spring15
 
     public partial class Plot_Graph : System.Web.UI.Page
     {
-        private static Excel.Workbook MyBook = null;
-        private static Excel.Application MyApp = null;
-        private static Excel.Worksheet MySheet = null;
+        #region Public Variables
         public static string excelFilepath = "";
         Object[] smoothedSSNList;
         Object[] monthlySSNList;
@@ -32,22 +30,25 @@ namespace Projections_Capstone_Spring15
         string[] strEndDate;
         string[] strStartDate;
 
-        object[] loc1 ;
-        object[] loc2 ;
-        object[] loc3 ;
-        object[] loc4;
-
+        dynamic[] loc1;
+        dynamic[] loc2;
+        dynamic[] loc3;
+        dynamic[] loc4;
+        static dynamic[] cpd;
+        //static dynamic[] cpd2;
         Computations c = new Computations();
-        public static List<DateTime> StartdateList = new List<DateTime>();
-        public static List<DateTime> EnddateList = new List<DateTime>();
-        public static List<double> averagesList = new List<double>();
 
+        #endregion
+
+          #region Page Load
         protected void Page_Load(object sender, EventArgs e)
         {
 
 
         }
+          #endregion
 
+        #region Upload TEPC file
         protected void Button1_Click(object sender, EventArgs e)
         {
             lblErrorDescription.Text = "";
@@ -73,7 +74,10 @@ namespace Projections_Capstone_Spring15
                 lblErrorDescription.Text = "File not recognized";
             }
         }
+        #endregion
 
+
+        #region write to Excel File
 
         private void WriteToExcelFile()
         {
@@ -81,7 +85,9 @@ namespace Projections_Capstone_Spring15
             System.IO.StreamWriter sw = new System.IO.StreamWriter(string.Concat(Server.MapPath("AverageDoses.csv")));
             c.WriteToExcelFile(sw);
         }
+        #endregion
 
+        #region Download Average Dose Values Link
         protected void lnkDownloadAvgTEPC_Click(object sender, EventArgs e)
         {
             Response.ContentType = "Application/x-msexcel";
@@ -89,7 +95,9 @@ namespace Projections_Capstone_Spring15
             Response.TransmitFile(Server.MapPath("AverageDoses.csv"));
             Response.End();
         }
+        #endregion
 
+        #region Upload RAM Data File
         protected void btnUploadRAM_TLD_Click(object sender, EventArgs e)
         {
             if (CheckCorrectExtension(btnRAMBrowse))
@@ -127,96 +135,148 @@ namespace Projections_Capstone_Spring15
                 lblErrorDescription.Text = "File not recongized";
             }
         }
+
+        #endregion
+
+        #region check for extensions of uploaded file
         public bool CheckCorrectExtension(FileUpload uploadControl)
         {
             bool correctExtension = c.CheckCorrectExtension(uploadControl);
             return correctExtension;
 
         }
+        #endregion
 
+        #region Plot Button Click
         protected void btnPlot_Click(object sender, EventArgs e)
         {
             RAMLocWiseValues();
-
+            //CPD Data
             DataTable dt = readFile();
             isValidData(dt);
-             calculateAverages(dt);
+            calculateAverages(dt);
             consolidatedData();
-            //DotNet.Highcharts.Highcharts chart = new DotNet.Highcharts.Highcharts("chart").InitChart(new Chart { ZoomType = DotNet.Highcharts.Enums.ZoomTypes.X })
-            //    .SetXAxis(new []{
-            //    new XAxis
-            //                {
-            //                   Id="Axes1",
-            //                    Categories = new[] { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" }
-            //                },
-            //                new XAxis
-            //                {
-            //                     Opposite=true,
-            //                     Id="Axes2",
-            //                    Categories=new[]{"Sun", "Mon","Tue","Wed","Thu","Fri","Sat"}
-            //                },
-            //                new XAxis
-            //                { 
-            //                     Id="Axes3",
-            //                    Categories=new[]{"Summer", "Winter","Fall"}
-            //                }
-            //    })
-            //    //.SetYAxis(new YAxis
-            //    //{
-            //    //    Categories = new[] { "0", "50", "100", "150", "200", "250", "300" }
-            //    //}
-            //    //)
-            //    .SetSeries(new[]
-            //    { new Series
-            //                {
-            //                    XAxis="Axes1",
-            //                    Name="First Series",
-            //                    Data = new Data(new object[] { 29.9, 71.5, 106.4, 129.2, 144.0, 176.0, 135.6, 148.5, 216.4, 194.1, 95.6, 54.4 })
-            //                },
-            //        new Series
-            //                {
-            //                    XAxis="Axes2",
-            //                    Name="Second series",
-            //                    Data = new Data(new object[] { 129.9, 171.5, 106.4, 129.2, 144.0, 176.0, 35.6 })
-            //                },
-            //    new Series
-            //                {
-            //                    XAxis="Axes3",
-            //                    Name="Second series",
-            //                    Data = new Data(new object[] { 100, 120, 95 })
-            //                }
-            //    });
+            //Plot the first chart with cosolidated data
+            plotConsolidatedData();
+            //plot the second chart with RAM and CPD data
+            plotRAMData();
+        }
+        #endregion
+
+        #region RAM Data Plot
+        private void plotRAMData()
+        {
+            //RAM graph
+            DotNet.Highcharts.Highcharts RAMChart = new DotNet.Highcharts.Highcharts("chart1").InitChart(new Chart
+            {
+                ZoomType = DotNet.Highcharts.Enums.ZoomTypes.Y,
+                Type = DotNet.Highcharts.Enums.ChartTypes.Columnrange,
+                Inverted = true
+            })
+            .SetXAxis(new[]{
+                new XAxis
+                            {
+                             Type=DotNet.Highcharts.Enums.AxisTypes.Linear,
+                             Max=350,
+                             Reversed=false,
+                             Title=new XAxisTitle{Text="Dose values"}
+                            }
+        }).SetYAxis(new[]{
+        new YAxis{
+             Type=DotNet.Highcharts.Enums.AxisTypes.Datetime,
+             Title=new YAxisTitle{Text="Date"}
+            }
+        });
+            RAMChart.SetTitle( new Title{Text="RAM and CPD"})
+            .SetTooltip(new Tooltip
+            {
+                PointFormat = "{point.low:%e %b, %y} - {point.high:%e %b, %y}",
+                HeaderFormat = "<b>{series.name}:</b>{point.x}<br />"
+            });
+            RAMChart.SetSeries(new[]
+                {  new Series
+                            {
+                                Name="CPD",
+                                Data = new Data(cpd),
+                                Color= System.Drawing.Color.Red
+                            },
+                    new Series
+                            {
+                                Name="SM-1",
+                                Data = new Data(loc1),
+                            },
+                             new Series
+                            {
+                                Name="SM-2",
+                                Data = new Data(loc2)
+                            },
+                             new Series
+                            {
+                                Name="SM-3",
+                                Data = new Data(loc3)
+                            },
+                             new Series
+                            {
+                                Name="SM-4",
+                                Data = new Data(loc4)
+                            }});
+            ltrRAM.Text = RAMChart.ToHtmlString();
+        }
+        #endregion
+
+        #region All Data Plot
+
+        private void plotConsolidatedData()
+        {
+            //All data graph
             DotNet.Highcharts.Highcharts chart = new DotNet.Highcharts.Highcharts("chart").InitChart(new Chart
             {
                 ZoomType = DotNet.Highcharts.Enums.ZoomTypes.X,
+
             })
             .SetXAxis(new[]{
                 new XAxis
                             {
                              Id="Month Axes",
-                              // Type=DotNet.Highcharts.Enums.AxisTypes.Datetime,
                                 Categories = datesList,
-                               Labels=new XAxisLabels{Step=10, StaggerLines=1}
+                               Labels=new XAxisLabels{Step=15, StaggerLines=1}
                              // MinRange=30*24
                             }
-                           
-                , new XAxis 
-                            { 
-                                Id="new X",
-                                Categories=new [] {"Category1", "Category2", "Category3"}
-                            }
+                //, new XAxis 
+                //            { 
+                //                Id="RAM_X", 
+                //                Type=DotNet.Highcharts.Enums.AxisTypes.Datetime,
+                //            // Max=350
+                //            }
             });
+
             chart.SetTitle(new Title { Text = "Space Weather and Altitude" });
             chart.SetSeries(new[]
                 { new Series
                             {
-                                
                                 YAxis="Sunspot",
                                 XAxis="Month Axes",
                                 Name="Smoothed SSN",
                                 Data = new Data(smoothedSSNList)
-                                //PlotOptionsLine=new PlotOptionsLine{PointInterval=24*24*3600000, PointStart=new PointStart(Convert.ToDateTime(datesList[0]))}
+                               // PlotOptionsLine=new PlotOptionsLine{PointInterval=24*24*3600000, PointStart=new PointStart(Convert.ToDateTime(datesList[0]))}
                             },
+//                            new Series
+//                            {
+//                                Name="CPD",
+//                                Data = new Data(cpd2),
+//                                Color= System.Drawing.Color.Red,
+//                                Type=DotNet.Highcharts.Enums.ChartTypes.Columnrange,
+//                                XAxis="RAM_X",
+//                                YAxis="RAM_Y",
+//                                PlotOptionsColumnrange=new PlotOptionsColumnrange{
+//                                Tooltip=new PlotOptionsColumnrangeTooltip{
+//                                    PointFormat = "{point.low:%e %b, %y} - {point.high:%e %b, %y}",
+//                HeaderFormat = "<b>{series.name}:</b>{point.y}<br />"
+//}
+//                                }
+                //                {PointFormat = "{point.low:%e %b, %y} - {point.high:%e %b, %y}",
+                //HeaderFormat = "<b>{series.name}:</b>{point.x}<br />"})
+                          //  },
                     new Series
                             {
                                 XAxis="Month Axes",
@@ -238,15 +298,6 @@ namespace Projections_Capstone_Spring15
                                 Name="Average Dose Values",
                                 Data = new Data(avgDoseInAllDataList)
                             }
-//                            } ,
-//                    new Series
-//                            {
-//                            YAxis="Altitude",
-//                            //XAxis="new X",
-//                            Type=DotNet.Highcharts.Enums.ChartTypes.Columnrange,
-//                            Name="Dummy Data",
-//                           // Data=new Data(new object[,]{{low=12.9,high=6.8},{12.5,99.8},{32.5,56.4}})
-//}
                 });
             chart.SetYAxis(new[]{
                    new YAxis
@@ -255,8 +306,7 @@ namespace Projections_Capstone_Spring15
                        Min=0,
                        Max=400,
                        TickInterval=25,
-                       Title=new YAxisTitle { Text = "Sunspot Number" }//,
-                       //Labels=new YAxisLabels{Format="{value} km"}
+                       Title=new YAxisTitle { Text = "Sunspot Number" }
                    },
                    new YAxis
                    {
@@ -266,11 +316,16 @@ namespace Projections_Capstone_Spring15
                        TickInterval=30,
                        Opposite=true,
                        Title=new YAxisTitle { Text = "Altitude [km] and dose values [µGy]" }
-                   }}
-                );
+                   },
+            //         new YAxis{
+            // Type=DotNet.Highcharts.Enums.AxisTypes.Linear,
+            // Id="RAM_Y",
+             
+            //}
+            });
             ltrChart.Text = chart.ToHtmlString();
-
         }
+
 
         public void consolidatedData()
         {
@@ -303,7 +358,9 @@ namespace Projections_Capstone_Spring15
             }
 
         }
+        #endregion
 
+        #region Table read Logic
         public DataTable getDataTable(string path)
         {
             OleDbCommand cmd = new OleDbCommand();//This is the OleDB data base connection to the XLS file
@@ -313,7 +370,7 @@ namespace Projections_Capstone_Spring15
             String[] s = getsheet(path);
             for (int i = 0; i < s.Length; i++)
             {
-                String query = "SELECT * FROM [" + s[0] + "]"; // You can use any different queries to get the data from the excel sheet
+                String query = "SELECT * FROM [" + s[i] + "]"; // You can use any different queries to get the data from the excel sheet
                 OleDbConnection conn = new OleDbConnection(connString);
                 if (conn.State == ConnectionState.Closed) conn.Open();
                 try
@@ -377,7 +434,6 @@ namespace Projections_Capstone_Spring15
                 }
             }
         }
-
         public DataTable readFile()
         {
             DataTable firstTable = new DataTable();
@@ -388,7 +444,7 @@ namespace Projections_Capstone_Spring15
             DataSet ds = new DataSet();
 
             String[] excelSheets;
-            string excelFile =  Server.MapPath("Target CPD.xlsx");
+            string excelFile = Server.MapPath("Target CPD.xlsx");
             try
             {
                 String connString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + excelFile + ";Extended Properties=Excel 12.0 xml;";
@@ -398,7 +454,7 @@ namespace Projections_Capstone_Spring15
                 if (dt == null)
                 {
                     // return null;
-                    Console.WriteLine("No data found");
+                   // Console.WriteLine("No data found");
                 }
                 excelSheets = new String[dt.Rows.Count];
                 int i = 0;
@@ -414,7 +470,6 @@ namespace Projections_Capstone_Spring15
                 da = new OleDbDataAdapter(cmd);
                 da.Fill(ds);
                 firstTable = ds.Tables[0];
-                // return firstTable;
                 return firstTable;
             }
             catch (Exception exc)
@@ -424,33 +479,36 @@ namespace Projections_Capstone_Spring15
 
             return firstTable;
         }
+        #endregion
 
+        #region check for valid Data
         public static bool isValidData(DataTable dt)
         {
-            // bool isDataValid = true;
-            //int count = 0;
-            for (int i = 0; i < dt.Rows.Count - 1; i++)
+           for (int i = 0; i < dt.Rows.Count - 1; i++)
             {
                 DataRow dr1 = dt.Rows[i];
                 DataRow dr2 = dt.Rows[i + 1];
                 DateTime endDay = DateTime.Parse(dr1[1].ToString());
                 DateTime nextBeginDay = DateTime.Parse(dr2[0].ToString());
                 double dayDifference = endDay.Subtract(nextBeginDay).TotalDays;
-                if (dayDifference < 0.0)
+                if (dayDifference < 0.0) //Check if the data is continuous and return false if there is data missing
                 {
-                    Console.WriteLine("Error in line: " + i);
-                    Console.ReadKey();
+                    //Console.WriteLine("Error in line: " + i);
+                    //Console.ReadKey();
                     return false;
                 }
             }
-            //Console.WriteLine("Read Successful");
-            // Console.ReadKey();
             return true;
         }
+        #endregion
 
+        #region logic to calculate AVG Values of Dose
         public static void calculateAverages(DataTable dt)
         {
             DateTime StartDay, EndDay;
+            cpd = new dynamic[dt.Rows.Count];
+            //cpd2 = new dynamic[dt.Rows.Count];
+            int index = 0;
             foreach (DataRow dr in dt.Rows)
             {
                 //GEt the first day and last day
@@ -461,20 +519,32 @@ namespace Projections_Capstone_Spring15
                 double TotalDays = Math.Ceiling((EndDay.Date - StartDay.Date).TotalDays + 1);
 
                 //Calculate the average CPD for the given period
-                double AvgCPD = Convert.ToDouble(dr[2]) / TotalDays;
+                double AvgCPD = (Convert.ToDouble(dr[2]) * 1000) / TotalDays;
 
-                //Add the average CPD, first month and last month values to the list
-                averagesList.Add(AvgCPD);
-                StartdateList.Add(new DateTime(StartDay.Year, StartDay.Month, 1));
-                EnddateList.Add(new DateTime(EndDay.Year, EndDay.Month, 1));
-
-
+                //Add the CPD data to the list
+                cpd[index] = new
+                {
+                    x = AvgCPD,
+                    low = new DateTime(StartDay.Year, StartDay.Month, 1),
+                    high = new DateTime(EndDay.Year, EndDay.Month, 1)
+                };
+                //cpd2[index] = new
+                //{
+                //    y = AvgCPD,
+                //    low = new DateTime(StartDay.Year, StartDay.Month, 1),
+                //    high = new DateTime(EndDay.Year, EndDay.Month, 1)
+                //};
+                index++;
             }
-        }
 
-        public  void RAMLocWiseValues()
+        }
+        #endregion
+
+        #region RAM Location Wise
+
+        public void RAMLocWiseValues()
         {
-           // string pathOfRAMLocWise = Directory.GetCurrentDirectory();
+            // string pathOfRAMLocWise = Directory.GetCurrentDirectory();
             DataTable d = s_RAMLocWise(Server.MapPath("RAM.xls"));
             int i = 0;
             List<Class1> klist = new List<Class1>();
@@ -493,7 +563,6 @@ namespace Projections_Capstone_Spring15
                 if (-(f1.start - f1.end).TotalDays < 181)
                 {
                     f1.end = getEndDate_RAMLocWise(f1.start);
-
                 }
                 int row = i;
                 Boolean err = false;
@@ -506,9 +575,7 @@ namespace Projections_Capstone_Spring15
                     {
                         err = true;
                         break;
-
                     }
-
                 }
                 if (err) break;
                 f1.values = new Dictionary<string, double>();
@@ -521,18 +588,13 @@ namespace Projections_Capstone_Spring15
                     if (i == 0)
                     {
                         ds1 += getDose_RAMLocWise(sm1[i], f1.end, sm1[i]);
-
                         ds2 += getDose_RAMLocWise(sm2[i], f1.end, sm1[i]);
                         ds3 += getDose_RAMLocWise(sm3[i], f1.end, sm1[i]);
                         ds4 += getDose_RAMLocWise(sm4[i], f1.end, sm1[i]);
-
-
-
                     }
                     else
                     {
                         ds1 += getDose_RAMLocWise(sm1[i], f1.end, sm1[i - 1]);
-
                         ds2 += getDose_RAMLocWise(sm2[i], f1.end, sm1[i - 1]);
                         ds3 += getDose_RAMLocWise(sm3[i], f1.end, sm1[i - 1]);
                         ds4 += getDose_RAMLocWise(sm4[i], f1.end, sm1[i - 1]);
@@ -545,30 +607,25 @@ namespace Projections_Capstone_Spring15
                 klist.Add(f1);
                 i = j + 1;
                 //SMvaluesDates.Add(kl)
-
             }
 
-
-            strEndDate = new string[klist.Count];
-             strStartDate = new string[klist.Count];
-
-             loc1 = new object[klist.Count];
-            loc2 = new object[klist.Count];
-           loc3 = new object[klist.Count];
-             loc4 = new object[klist.Count];
-
+            //strEndDate = new string[klist.Count];
+            //strStartDate = new string[klist.Count];
+            loc1 = new dynamic[klist.Count];
+            loc2 = new dynamic[klist.Count];
+            loc3 = new dynamic[klist.Count];
+            loc4 = new dynamic[klist.Count];
             for (int ii = 0; ii < klist.Count; ii++)
             {
-                strStartDate[ii] = klist[ii].start.ToString();
-                strEndDate[ii] = klist[ii].end.ToString();
-                loc1[ii] = klist[ii].values["1"];
-                loc2[ii] = klist[ii].values["2"];
-                loc3[ii] = klist[ii].values["3"];
-                loc4[ii] = klist[ii].values["4"];
+                //Create dynamic lists here
+                loc1[ii] = new { x = klist[ii].values["1"], low = klist[ii].start, high = klist[ii].end };
+                loc2[ii] = new { x = klist[ii].values["2"], low = klist[ii].start, high = klist[ii].end };
+                loc3[ii] = new { x = klist[ii].values["3"], low = klist[ii].start, high = klist[ii].end };
+                loc4[ii] = new { x = klist[ii].values["4"], low = klist[ii].start, high = klist[ii].end };
+                //Enddnamic lists
             }
-
-
         }
+      
 
 
 
@@ -585,28 +642,21 @@ namespace Projections_Capstone_Spring15
             {
                 minusdays = (sf1 - sf).TotalDays;
             }
-
             var f1 = (DateTime)s1["EndDate"];
             if (end >= f1)
             {
                 return Math.Round(abs, 2);
-
-
             }
             else
             {
                 double d = -(((DateTime)s1["StartDate"] - end).TotalDays);
                 return Math.Round(dose * (d - minusdays), 2);
             }
-
-
-
         }
         public static DateTime getEndDate_RAMLocWise(DateTime t)
         {
             DateTime d = t.AddDays(181);
             return d;
-
         }
         public static DataTable s_RAMLocWise(string path)
         {
@@ -628,22 +678,17 @@ namespace Projections_Capstone_Spring15
                     da = new OleDbDataAdapter(cmd);
                     da.Fill(ds);
                     DataTable firstTable = ds.Tables[0];
-
                     return firstTable;
                 }
                 catch
                 {
-
-
                     return null;
                 }
                 finally
                 {
                     da.Dispose();
                     conn.Close();
-
                 }
-
             }
             return null;
         }
@@ -654,7 +699,6 @@ namespace Projections_Capstone_Spring15
 
             try
             {
-
                 String connString = "Provider=Microsoft.Jet.OLEDB.4.0;" +
                   "Data Source=" + excelFile + ";Extended Properties=Excel 8.0;";
 
@@ -700,18 +744,15 @@ namespace Projections_Capstone_Spring15
                 }
             }
         }
+        #endregion
 
-
+          #region class for RAM Values
         class Class1
         {
             public DateTime start;
             public DateTime end;
             public Dictionary<string, double> values;
-
-
-
         }
-
-
+#endregion
     }
 }

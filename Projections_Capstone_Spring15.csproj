@@ -99,6 +99,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="plotdemo.aspx" />
     <Content Include="Scripts\Highcharts-4.0.1\js\adapters\standalone-framework.js" />
     <Content Include="Scripts\Highcharts-4.0.1\js\adapters\standalone-framework.src.js" />
     <Content Include="Scripts\Highcharts-4.0.1\js\highcharts-3d.js" />
@@ -158,6 +159,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Computations.cs" />
+    <Compile Include="plotdemo.aspx.cs">
+      <DependentUpon>plotdemo.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="plotdemo.aspx.designer.cs">
+      <DependentUpon>plotdemo.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Plot_Graph.aspx.cs">
       <DependentUpon>Plot_Graph.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

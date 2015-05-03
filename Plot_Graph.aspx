@@ -55,13 +55,26 @@
         </div>
         <%--Accordian code end--%>
         <asp:Button runat="server" ID="btnPlot" Text="Plot" CssClass="ui-widget button btnPlot" OnClick="btnPlot_Click" />
-        <div>
+        <%--<div class="chart">
             <asp:Literal ID="ltrChart" runat="server"></asp:Literal>
         </div>
+        <div class="spacer"></div>
+         <div class="chart">
+            <asp:Literal ID="ltrRAM" runat="server"></asp:Literal>
+        </div>--%>
+
+        <div id="divltrChart" style="height:500px;">
+            <asp:Literal ID="ltrChart" runat="server"></asp:Literal>
+        </div>
+        <div id="divltrRAMChart" style="height:500px;">
+            <asp:Literal ID="ltrRAM" runat="server"></asp:Literal>
+        </div>
+
 
         <%--    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>--%>
         <script src="Scripts/jquery-ui.js"></script>
         <script src="Scripts/Highcharts-4.0.1/js/highcharts.js"></script>
+        <script src="Scripts/Highcharts-4.0.1/js/highcharts-more.js"></script>
         <script>
             $(document).ready(function () {
                 $("#accordion").accordion();
@@ -69,9 +82,7 @@
             //$(function () {
             //    $('[id^=datepicker]').datepicker();
             //});
-            $("#ltrChart").highcharts({
-                chart: { zoomType: 'xy' }
-            });
+
         </script>
 
     </form>
