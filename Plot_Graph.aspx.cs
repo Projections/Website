@@ -76,7 +76,6 @@ namespace Projections_Capstone_Spring15
         }
         #endregion
 
-
         #region write to Excel File
 
         private void WriteToExcelFile()
@@ -100,7 +99,7 @@ namespace Projections_Capstone_Spring15
         #region Upload RAM Data File
         protected void btnUploadRAM_TLD_Click(object sender, EventArgs e)
         {
-            if (CheckCorrectExtension(btnRAMBrowse))
+            if (CheckCorrectExtension(btnRAMBrowse) && !string.IsNullOrEmpty(datepickerStart.Text) && !string.IsNullOrEmpty(datepickerStart.Text))
             {
                 try
                 {
@@ -132,7 +131,7 @@ namespace Projections_Capstone_Spring15
             }
             else
             {
-                lblErrorDescription.Text = "File not recongized";
+                lblErrorDescription.Text = "File not recongized or Date values are not entered";
             }
         }
 
@@ -179,7 +178,7 @@ namespace Projections_Capstone_Spring15
                              Type=DotNet.Highcharts.Enums.AxisTypes.Linear,
                              Max=350,
                              Reversed=false,
-                             Title=new XAxisTitle{Text="Dose values"}
+                             Title=new XAxisTitle{Text="Dose values [µGy]"}
                             }
         }).SetYAxis(new[]{
         new YAxis{
@@ -746,7 +745,7 @@ namespace Projections_Capstone_Spring15
         }
         #endregion
 
-          #region class for RAM Values
+        #region class for RAM Values
         class Class1
         {
             public DateTime start;
