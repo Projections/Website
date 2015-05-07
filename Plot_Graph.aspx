@@ -21,7 +21,7 @@
             <div>
                 <asp:FileUpload ID="btnTEPCBrowse" runat="server" />
                 <asp:Button ID="btnUploadTEPC" runat="server" OnClick="Button1_Click" Text="Upload" OnClientClick="javascript:$('#imgTEPCLoading').show();" />
-                <asp:LinkButton runat="server" Text="Download average doses values" ID="lnkDownloadAvgTEPC" OnClick="lnkDownloadAvgTEPC_Click"></asp:LinkButton>
+                <asp:LinkButton runat="server" Text="Download average doses" ID="lnkDownloadAvgTEPC" OnClick="lnkDownloadAvgTEPC_Click"></asp:LinkButton>
                 <div>
                     <img src="Styles/images/ajax-loader.gif" id="imgTEPCLoading" runat="server" style="display: none" />
                     <asp:Label ID="lblErrorDescription" runat="server" Text="" ForeColor="Red"></asp:Label>
@@ -39,13 +39,13 @@
                 <div style="float: left; width: 50%">
                     <p>
                         Start Date:
-                    <asp:TextBox runat="server" ID="datepickerStart" />
+                    <asp:TextBox runat="server" ID="datepickerStart" ToolTip="MM-DD-YYYY" />
                     </p>
                 </div>
                 <div style="float: left">
                     <p>
                         End Date:
-                    <asp:TextBox runat="server" ID="datepickerEnd" />
+                    <asp:TextBox runat="server" ID="datepickerEnd" ToolTip="MM-DD-YYYY" />
                     </p>
                 </div>
                 <div style="clear: both"></div>
@@ -55,19 +55,18 @@
         </div>
         <%--Accordian code end--%>
         <asp:Button runat="server" ID="btnPlot" Text="Plot" CssClass="ui-widget button btnPlot" OnClick="btnPlot_Click" />
-        <%--<div class="chart">
-            <asp:Literal ID="ltrChart" runat="server"></asp:Literal>
-        </div>
-        <div class="spacer"></div>
-         <div class="chart">
-            <asp:Literal ID="ltrRAM" runat="server"></asp:Literal>
-        </div>--%>
 
-        <div id="divltrChart" style="height:500px;">
+
+        <div id="divltrChart" style="height:500px">
             <asp:Literal ID="ltrChart" runat="server"></asp:Literal>
         </div>
-        <div id="divltrRAMChart" style="height:500px;">
+        <div id="divltrRAMChart">
             <asp:Literal ID="ltrRAM" runat="server"></asp:Literal>
+        </div>
+        <div>
+            <p>
+                SUNSPOT Data Reference: SILSO data/image, Royal Observatory of Belgium, Brussels
+            </p>
         </div>
 
 
@@ -79,9 +78,6 @@
             $(document).ready(function () {
                 $("#accordion").accordion();
             });
-            //$(function () {
-            //    $('[id^=datepicker]').datepicker();
-            //});
 
         </script>
 

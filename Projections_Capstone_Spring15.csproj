@@ -91,6 +91,12 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="packages.config" />
+    <Content Include="DataTillDate.xlsx" />
+    <Content Include="DummyTEPCdata.xlsx" />
+    <Content Include="RAM-TLD.xlsx" />
+    <Content Include="RAM.xls" />
+    <Content Include="RAM.xlsx" />
+    <Content Include="Target CPD.xlsx" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
